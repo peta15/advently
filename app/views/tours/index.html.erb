@@ -1,0 +1,24 @@
+<div class="span-24 last">
+	<div id="browse_header" class="span-24 last round shadow">
+		<div class="pad10">
+			<select class="large">
+				<option>New York City</option>
+			</select>
+			<input class="button" type="submit" id="submit_find_tour" name="submit_find_tour" value="Search" onclick="window.location='<%= tours_url %>'">
+		</div>
+	</div>
+	<div id="browse_side_bar" class="span-6 shadow round">
+		<div class="pad10 center">
+			<img src="/images/customer_satisfaction_en.png" width="170" height="155">
+			<p><b>Customer service 100% satisfaction</b></p>
+		</div>
+	</div>
+	<div id="browse_list_container" class="span-18 last shadow round">
+		<% if @tours.any? %>
+			<ul id="browse_list">
+				<%= render @tours %>
+			</ul>
+		<% end  %>
+	</div>
+	
+</div>

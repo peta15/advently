@@ -1,0 +1,141 @@
+<%= form_for @tour, :validate => true, :html => { :multipart => true, :class => "form-fat" } do |f| %>
+
+<%= render 'shared/error_messages', :object => f.object %>
+<div class="field">
+	<%= f.label 'title' %><%= mark_required(@tour, :title) %>
+	<%= f.text_field :title %>
+</div>
+<div class="field">
+	<%= f.label 'Location' %><%= mark_required(@tour, :location) %>
+	<%= f.text_field :location %>
+</div>
+<div class="field field-textarea">
+	<%= f.label 'Description' %><%= mark_required(@tour, :description) %>
+	<%= f.text_area :description %>
+</div>
+<div class="field">
+	<%= f.label 'Max people' %>
+	<%= f.text_field :user_limit %>
+</div>
+<div class="field">
+	<%= f.label 'Price' %>
+	<%= f.text_field :price %>
+</div>
+<div class="field">
+	<%= f.label 'From' %>
+	<div class="date_select">
+		<%= f.date_select(:from_date) %>
+	</div>
+</div>
+<div class="field">
+	<%= f.label 'To' %>
+	<div class="date_select">
+		<%= f.date_select(:to_date) %>
+	</div>
+</div>
+<div class="field">
+	<%= f.label 'Region' %>
+	<select class="large region_select">
+		<option>New York City</option>
+	</select>
+</div>
+<div class="field">
+	<%= f.label 'Meeting Spot' %><%= mark_required(@tour, :meetup_location) %>
+	<%= f.text_field :meetup_location %>
+</div>
+<div id="new_tour_map_canvas" class="round shadow"></div>
+
+<div class="photo-upload border-top mar40-top pad10-top">
+	<h3>Photos</h3>
+
+	<h4>New Files</h4>
+
+	<%= f.fields_for :assets do |asset_fields| %>
+	<% if asset_fields.object.new_record? %>
+	<p>
+		<%= asset_fields.file_field :asset %>
+	</p>
+	<% end %>
+	<% end %>
+
+	<h4>Old Files</h4>
+
+	<%= f.fields_for :assets do |asset_fields| %>
+	<% unless asset_fields.object.new_record? %>
+	<div class="thumb">
+		<%= link_to image_tag(asset_fields.object.asset.url(:thumb)), asset_fields.object.asset.url(:original) %>
+		<%= asset_fields.check_box :_destroy %>
+	</div>
+	<% end %>
+	<% end %>
+</div>
+<div class="actions">
+	<%= f.submit "Submit", :class => 'button' %>
+</div>
+<% end %>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+var marker;
+var bounds;
+var map;
+var geocoder;
+var config = {};
+	config.debug = <%= Rails.env.development? %>;
+	config.address = "#tour_meetup_location";
+	config.mapId = "new_tour_map_canvas";
+	$(function(){ initialize(); });
+	function initialize() {
+		var manhattan = new google.maps.LatLng(40.7711329, -73.9741874);
+		var myOptions = {
+		  zoom: 8,
+		  center: manhattan,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		map = new google.maps.Map(document.getElementById(config.mapId), myOptions);
+		geocoder = new google.maps.Geocoder();
+		$(config.address).keyup(mapLocation);
+	}
+	function mapLocation() {
+		var address = $(config.address).val();
+		var location = geocode(address, fitMap);
+		// program flow moves to fitMap callback
+	}
+	function fitMap(location) {
+		debug("map location: "+location);
+		map.setCenter(location);
+		map.setZoom(12);
+		if(marker)
+			marker.setPosition(location);
+		else
+			marker = new google.maps.Marker({
+				position: location, 
+				map: map
+			});
+	}
+	function geocode(address, callback) {
+		geocoder.geocode( { 'address': address}, function(results, status) {
+		  if (status == google.maps.GeocoderStatus.OK) {
+				return callback(results[0].geometry.location);
+		  } else {
+			error("Geocode was not successful for the following reason: " + status);
+		  }
+		});
+	  }
+	function debug(string) {
+		string = 'JS DEBUG: ' + string;
+		if(config.debug) { 
+			if(console != null)
+				console.log(string);
+			else
+				alert(string);
+		}
+	};
+	function error(string) {
+		string = 'JS ERROR: ' + string;
+		if(console != null && config.debug)
+			console.log(string);
+		else
+			alert(string);
+	};
+</script>

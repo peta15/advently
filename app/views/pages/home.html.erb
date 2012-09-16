@@ -1,0 +1,22 @@
+<div class="span-12">
+	<div id="find_tour" class="center">
+		<h1><b>Find a unique tour.</b></h1>
+		
+		<select class="large">
+			<option>New York City</option>
+		</select>
+		<input class="button" type="submit" id="submit_find_tour" name="submit_find_tour" value="Search" onclick="window.location='<%= tours_url %>'">
+	</div>
+	<div id="create_tour" class="center">
+		<h1><b>Anyone can create a tour.</b></h1>
+		<input class="button" type="submit" id="submit_create_tour" name="submit_create_tour" value="Create a tour" onclick="window.location='<%= new_tour_url %>'">
+	</div>		
+	<div id="facebook_like">
+		<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=104556322974835&amp;xfbml=1"></script><fb:like href="http://meetuptours.com/" send="true" width="450" show_faces="true" font=""></fb:like>
+	</div>
+</div>
+<div class="span-12 last">
+	<h3 class="center">List and book group tours with other travelers around the world.</h3>
+	<%#= render 'slideshow' %>
+	<%= render 'random_tour' %>
+</div>

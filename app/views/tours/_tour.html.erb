@@ -1,0 +1,35 @@
+<li class="clear">
+	<div class="span-4">
+		<div class="browse_list_image round shadow">
+			<% if tour.assets.count > 0 %>
+			<%= image_tag tour.assets.first.asset.url(:thumb) %>
+			<% else %>
+			<img src="http://placekitten.com/120/80">
+			<% end %>
+		</div>
+	</div>
+	<div class="span-10 prepend-top append-bottom">
+		<%= link_to tour.title, tour_path(tour), :class => 'title' %>
+		<p class="gray mar0"><%= tour.location %></p>
+		<p class="mar0">
+			<span>Guide: <%= tour.user.name %></span>
+			<span class="right mar20-right"><%= tour.members.count %> / <%= tour.user_limit %> participants</span>
+		</p>
+		<%= fb_thumbnail_for(tour.user) %>
+	</div>
+	<div class="span-4 last prepend-top append-bottom">
+		<strong>$ <%= tour.price? ? tour.price.ceil : "Free" %></strong>
+		<%= link_to "Details", tour_path(tour), :class => 'button' %>
+		
+		<% user = tour.user rescue User.find(tour.user_id) %>
+		<% if current_user?(user) %>
+		<p class="mar10-top">
+			<%= link_to "edit", edit_tour_path(tour) %>
+			|
+			<%= link_to "delete", tour, :method => :delete,
+			:confirm => "You sure?",
+			:title => tour.description %>
+		</p>
+		<% end %>
+	</div>
+</li>

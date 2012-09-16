@@ -1,0 +1,169 @@
+<div class="span-24 last">
+	<div class="span-24 round shadow">
+		<div class="span-20">
+			<div class="pad20">
+				<h1 class="mar13-bottom"><%= @tour.title %></h1>
+				<h2 class="gray mar0">	<%= @tour.location %></h2>
+			</div>
+		</div>
+		<div class="span-4 last">
+			<div class="pad20">
+				<!-- facebook like -->
+				<div id="fb-root">
+				</div>
+				<script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+				<fb:like href="" send="false" layout="button_count" width="100" show_faces="false" font="arial">
+				</fb:like>				
+				<div class = "spacer">
+				</div>				
+				<!-- twitter like -->
+				<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="meetuptours">Tweet</a>
+				<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="span-10 mar20-top">
+	<div id="tour_description" class="round shadow pad20">
+		<dt>
+			Tour Description
+		</dt>
+		<dd>
+			<%= @tour.description %>
+		</dd>
+		<dt>
+			Departure
+		</dt>
+		<dd>
+			<%= @tour.from_date.strftime("%b %d, %Y") %>
+		</dd>
+		<dt>
+			Duration
+		</dt>
+		<dd>
+			<%= (@tour.to_date - @tour.from_date).to_i/60/60/24+1 %> days
+		</dd>
+	</div>
+	<div class="round shadow pad10 mar20-top">
+		<div id="meeting_spot">
+			<dt>
+				Meeting Spot
+			</dt>
+			<dd>
+				<%= @tour.meetup_location %>
+			</dd>
+			<div id="show_tour_map_canvas" class="round"></div>
+		</div>
+	</div>
+				
+	<div class="round shadow pad10 mar20-top">		
+		<% user = @tour.user rescue User.find(tour.user_id) %>
+		<%= fb_thumbnail_for(user) %>
+		<p class="gray mar0">
+			Guide: <%= user.name if user %>
+		</p>
+	</div>
+	
+	
+	
+</div>
+<div class="span-14 last mar20-top">
+	<div class="round shadow pad10 mar20-left">
+		<% if @tour.assets.count > 0 %>
+		<%= image_tag @tour.assets.first.asset.url(:medium), :class => 'round' %>
+		<% else %>
+		<img src="http://placekitten.com/510/420" class="round">
+		<% end %>
+	</div>
+	<div id="join_tour_div" class="round shadow mar20-top mar20-left">
+		<p>
+			<strong>$ <%= @tour.price? ? @tour.price : "Free" %></strong>
+		</p>
+		<p>
+			<%= link_to "Join tour", "#{@tour.id}/join", :class => 'button' %>
+		</p>
+		<% if @tour.user_limit? %>
+		<p>
+			<%= @tour.user_limit-@tour.members.count %> Spots Left
+		</p>
+		<% end %>
+	</div>
+	<% if @tour.members.any? %>
+	<div class="round shadow center mar10-top pad10 mar20-left height100">
+		<p class="mar0"><b>Who is going?</b></p>
+		<% @tour.members.each do |m| %>
+		<div class="left mar10">
+			<%= fb_thumbnail_for(m.user) %><br />
+			<%= m.user.name.split[0] %>
+		</div>
+		<% end %>
+	</div>
+	<% end %>
+</div>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+var marker;
+var bounds;
+var map;
+var geocoder;
+var config = {};
+	config.debug = <%= Rails.env.development? %>;
+	config.address = "<%= @tour.meetup_location %>";
+	config.mapId = "show_tour_map_canvas";
+	$(function(){ initialize(); });
+	function initialize() {
+		var manhattan = new google.maps.LatLng(40.7711329, -73.9741874);
+		var myOptions = {
+		  zoom: 8,
+		  center: manhattan,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		map = new google.maps.Map(document.getElementById(config.mapId), myOptions);
+		geocoder = new google.maps.Geocoder();
+		$(config.address).keyup(mapLocation);
+	}
+	function mapLocation() {
+		var address = $(config.address).val();
+		var location = geocode(address, fitMap);
+		// program flow moves to fitMap callback
+	}
+	function fitMap(location) {
+		debug("map location: "+location);
+		map.setCenter(location);
+		map.setZoom(12);
+		if(marker)
+			marker.setPosition(location);
+		else
+			marker = new google.maps.Marker({
+				position: location, 
+				map: map
+			});
+	}
+	function geocode(address, callback) {
+		geocoder.geocode( { 'address': address}, function(results, status) {
+		  if (status == google.maps.GeocoderStatus.OK) {
+				return callback(results[0].geometry.location);
+		  } else {
+			error("Geocode was not successful for the following reason: " + status);
+		  }
+		});
+	  }
+	function debug(string) {
+		string = 'JS DEBUG: ' + string;
+		if(config.debug) { 
+			if(console != null)
+				console.log(string);
+			else
+				alert(string);
+		}
+	};
+	function error(string) {
+		string = 'JS ERROR: ' + string;
+		if(console != null && config.debug)
+			console.log(string);
+		else
+			alert(string);
+	};
+</script>

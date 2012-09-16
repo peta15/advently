@@ -1,0 +1,84 @@
+<div class="ad-gallery">
+  <div class="ad-image-wrapper">
+  </div>
+  <div class="ad-controls">
+  </div>
+  <div class="ad-nav">
+    <div class="ad-thumbs">
+      <ul class="ad-thumb-list">
+      	<% if @tours.any? %>
+					<% @tours.first(10).each do |tour| %>
+						<% if tour.assets.count > 0 %>
+					        <li>
+					          <a href="<%= tour.assets.first.asset.url(:medium) %>" %>
+					            <%= image_tag tour.assets.first.asset.url(:medium), :title => tour.description %> <!-- this is supposed to be thumbnail? -->
+					          </a>
+					        </li>
+				    <% end %>
+				<% end %>
+		<% else %>
+			<img class="slideshow" src="/images/nyc_large.png">
+		<% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="descriptions">
+</div>
+
+<style type="text/css">
+  #gallery {
+    padding: 30px;
+    background: #e1eef5;
+  }
+  #descriptions {
+    position: relative;
+    height: 50px;
+    background: #EEE;
+    margin-top: 10px;
+    width: 640px;
+    padding: 10px;
+    overflow: hidden;
+  }
+    #descriptions .ad-image-description {
+      position: absolute;
+    }
+      #descriptions .ad-image-description .ad-description-title {
+        display: block;
+      }
+</style>
+
+  <link rel="stylesheet" type="text/css" href="jquery.ad-gallery.css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="jquery.ad-gallery.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    $('img.image1').data('ad-desc', 'Whoa! This description is set through elm.data("ad-desc") instead of using the longdesc attribute.<br>And it contains <strong>H</strong>ow <strong>T</strong>o <strong>M</strong>eet <strong>L</strong>adies... <em>What?</em> That aint what HTML stands for? Man...');
+    $('img.image1').data('ad-title', 'Title through $.data');
+    $('img.image4').data('ad-desc', 'This image is wider than the wrapper, so it has been scaled down');
+    $('img.image5').data('ad-desc', 'This image is higher than the wrapper, so it has been scaled down');
+    var galleries = $('.ad-gallery').adGallery();
+    $('#switch-effect').change(
+      function() {
+        galleries[0].settings.effect = $(this).val();
+        return false;
+      }
+    );
+    $('#toggle-slideshow').click(
+      function() {
+        galleries[0].slideshow.toggle();
+        return false;
+      }
+    );
+    $('#toggle-description').click(
+      function() {
+        if(!galleries[0].settings.description_wrapper) {
+          galleries[0].settings.description_wrapper = $('#descriptions');
+        } else {
+          galleries[0].settings.description_wrapper = false;
+        }
+        return false;
+      }
+    );
+  });
+  </script>

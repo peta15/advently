@@ -1,0 +1,33 @@
+<div id="login_register" class="prepend-6 append-6 span-12 last form-fat">
+	<div class="round shadow mar10 facebook">
+		<p class="first-line round">
+			Register
+			<span>using your facebook account</span>
+		</p>
+		<% if current_user %>
+		  Welcome <%= current_user.name %>!
+		  <%= link_to "Sign Out", signout_path %>
+		<% else %>
+			<dl>
+				<dt> Connect with Facebook: </dt>
+				<dd>
+					<%= link_to image_tag("login-with-facebook-button.png"), "/auth/facebook" %>
+				</dd>
+			</dl>
+		<% end %>
+	</div>
+	<!--
+	<div class="round shadow mar10 register">
+		<p class="first-line round">
+			Register
+		</p>
+		<%= form_for(@user) do |f| %>
+		  <%= render 'shared/error_messages', :object => f.object %>
+		  <%= render 'fields', :f => f %>
+		  <div class="actions">
+		    <%= f.submit "Register", :class => 'button' %>
+		  </div>  
+		<% end %>
+	</div>
+	-->
+</div>

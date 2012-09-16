@@ -1,0 +1,30 @@
+<div class="span-18 prepend-3 append-3">
+	<div class="span-18 last round shadow pad10">
+		<div class="left"><%= fb_thumbnail_for(@user) %></div>
+		<h1 class="mar0 left mar20-left"><%= @user.name %></h1>
+	</div>
+	<div id="browse_list_container" class="span-18 last shadow round mar20-top pad10">
+		<h3>Tours I created</h3>
+		<% if @user.tours.any? %>
+		<ul id="browse_list">
+			<%= render @tours %>
+		</ul>
+		<%= will_paginate @tours %>
+		<% else  %>
+		No tours yet!  <%= link_to "Create a tour", new_tour_url %>
+		<% end %>
+	</div>
+	<div id="browse_list_container" class="span-18 last shadow round mar20-top pad10">
+		<h3>Tours I'm going on</h3>
+		<% if @booked_tours.any? %>
+		<ul id="browse_list">
+			<%= render @booked_tours %>
+		</ul>
+		<% else  %>
+		No tours yet!  <%= link_to "Browse tours to join", tours_path %>
+		<% end %>
+	</div>
+</div>
+
+<!-- Alternatively, use the user_tour partial to create a different look for the dashboard -->
+<% #= render :partial => "tours/user_tour", :collection => @tours %>

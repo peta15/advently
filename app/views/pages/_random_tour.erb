@@ -1,0 +1,28 @@
+<div>
+	<% if @random_tour %>
+
+	<div class="span-12 last round shadow pad10">
+
+		<% if @random_tour.assets.count > 0 %>
+		<%= link_to image_tag(@random_tour.assets.first.asset.url(:medium), :size => "472x320", :title => @random_tour.title, :class => 'round'), tour_path(@random_tour) %>
+		<% else %>
+		<a href="<%= tour_path(@random_tour) %>">
+		<img src="http://placekitten.com/472/320" class="round">
+		</a>
+		<% end %>
+
+		<div class="gray round pad10">
+			<div class="left mar20-right shadow pad3 dim50">
+				<%= fb_thumbnail_for(@random_tour.user) %>
+			</div>
+			<div class="left">
+				<h3><%= link_to @random_tour.title, tour_path(@random_tour) %></h3>
+				<p>
+					<%= @random_tour.location %>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<% end %>
+</div>
